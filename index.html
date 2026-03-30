@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Scale Wars</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --blue:#1c4587;--blue-light:#2a6bc7;--blue-dark:#142f5c;
+  --bg:#0d1117;--card:#161b22;--card-hover:#1c2333;
+  --text:#e6edf3;--text-dim:#8b949e;--text-bright:#ffffff;
+  --gold:#ffd700;--silver:#c0c0c0;--bronze:#cd7f32;
+  --correct:#2ea043;--wrong:#da3633;--partial:#d29922;
+  --radius:12px;--shadow:0 4px 24px rgba(0,0,0,0.4);
+}
+html,body{height:100%;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
+body{display:flex;flex-direction:column;align-items:center}
+
+/* ============ UTILITY ============ */
+.hidden{display:none!important}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:14px 32px;border:none;border-radius:var(--radius);cursor:pointer;
+  font-size:1rem;font-weight:600;transition:all .2s;
+}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-primary:hover{background:var(--blue-light);transform:translateY(-1px)}
+.btn-secondary{background:var(--card);color:var(--text);border:1px solid #30363d}
+.btn-secondary:hover{background:var(--card-hover)}
+.btn-sm{padding:8px 18px;font-size:.85rem}
+.btn-lg{padding:18px 48px;font-size:1.2rem}
+
+input[type="text"]{
+  padding:12px 16px;border:1px solid #30363d;border-radius:var(--radius);
+  background:var(--card);color:var(--text);font-size:1rem;width:100%;
+}
+input[type="text"]:focus{outline:none;border-color:var(--blue)}
+input[type="number"]{
+  padding:8px 12px;border:1px solid #30363d;border-radius:8px;
+  background:var(--card);color:var(--text);font-size:1rem;width:70px;text-align:center;
+}
+input[type="number"]:focus{outline:none;border-color:var(--blue)}
+
+/* ============ SCREENS ============ */
+.screen{
+  width:100%;max-width:900px;min-height:100vh;padding:24px;
+  display:flex;flex-direction:column;align-items:center;
+}
+
+/* --- TITLE SCREEN --- */
+#title-screen{justify-content:center;text-align:center;gap:32px}
+#title-screen h1{
+  font-size:clamp(3rem,8vw,5rem);font-weight:900;letter-spacing:-.02em;
+  background:linear-gradient(135deg,var(--blue-light),var(--gold));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+#title-screen .subtitle{font-size:1.1rem;color:var(--text-dim);max-width:500px;line-height:1.6}
+#title-screen .btn-row{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
+
+/* --- TEAM SETUP --- */
+#team-setup{justify-content:center;gap:24px;text-align:center}
+#team-setup h2{font-size:2rem;font-weight:700}
+#team-setup .form-row{display:flex;gap:12px;width:100%;max-width:400px}
+
+/* --- HOST DASHBOARD --- */
+#host-dashboard{gap:24px}
+#host-dashboard h2{font-size:2rem;font-weight:700;text-align:center}
+.leaderboard{width:100%;border-collapse:separate;border-spacing:0;border-radius:var(--radius);overflow:hidden}
+.leaderboard thead{background:var(--blue-dark)}
+.leaderboard th{padding:14px 16px;text-align:left;font-weight:600;font-size:.85rem;text-transform:uppercase;letter-spacing:.05em;color:var(--text-dim)}
+.leaderboard th:first-child{width:50px;text-align:center}
+.leaderboard th.round-col{text-align:center;width:60px}
+.leaderboard th.total-col{text-align:center;width:80px;color:var(--gold)}
+.leaderboard td{padding:12px 16px;background:var(--card);border-bottom:1px solid #21262d}
+.leaderboard td:first-child{text-align:center;font-weight:700;color:var(--text-dim)}
+.leaderboard td.round-cell{text-align:center}
+.leaderboard td.round-cell input{width:50px}
+.leaderboard td.total-cell{text-align:center;font-weight:700;font-size:1.1rem;color:var(--gold)}
+.leaderboard tr.rank-1 td:first-child{color:var(--gold)}
+.leaderboard tr.rank-2 td:first-child{color:var(--silver)}
+.leaderboard tr.rank-3 td:first-child{color:var(--bronze)}
+.leaderboard .team-name-cell{font-weight:600;font-size:1rem}
+.host-controls{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;align-items:center}
+.host-team-input{display:flex;gap:8px;align-items:center;width:100%;max-width:400px}
+
+/* --- ROUND INTRO --- */
+#round-intro{justify-content:center;text-align:center;gap:24px}
+#round-intro .round-number{font-size:1rem;text-transform:uppercase;letter-spacing:.15em;color:var(--blue-light);font-weight:700}
+#round-intro h2{font-size:clamp(2rem,6vw,3.5rem);font-weight:800}
+#round-intro .round-property{font-size:1.3rem;color:var(--text-dim);margin-top:8px}
+#round-intro .round-direction{
+  display:inline-block;padding:8px 24px;border-radius:999px;
+  background:rgba(28,69,135,.15);color:var(--blue-light);font-weight:600;margin-top:8px;
+}
+
+/* --- ORDERING PHASE --- */
+#ordering-phase{gap:16px;padding-top:16px}
+.phase-header{display:flex;justify-content:space-between;align-items:center;width:100%}
+.phase-header h3{font-size:1.2rem;font-weight:600}
+.timer{
+  font-size:1.4rem;font-weight:700;font-variant-numeric:tabular-nums;
+  padding:8px 20px;border-radius:999px;background:var(--card);
+}
+.timer.warning{color:var(--partial);background:rgba(210,153,34,.15)}
+.timer.critical{color:var(--wrong);background:rgba(218,54,51,.15);animation:pulse 1s ease infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+
+.sort-list{
+  width:100%;list-style:none;display:flex;flex-direction:column;gap:8px;
+  padding:0;flex:1;
+}
+.sort-item{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 16px;background:var(--card);border:2px solid transparent;
+  border-radius:var(--radius);cursor:grab;user-select:none;
+  transition:transform .15s,box-shadow .15s,border-color .15s;
+  touch-action:none;
+}
+.sort-item:active{cursor:grabbing}
+.sort-item.dragging{
+  opacity:.9;transform:scale(1.03);box-shadow:var(--shadow);
+  border-color:var(--blue);z-index:100;
+}
+.sort-item .rank-num{
+  width:32px;height:32px;border-radius:50%;
+  background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:.85rem;color:var(--text-dim);flex-shrink:0;
+}
+.sort-item .item-label{flex:1;font-weight:500;font-size:1rem}
+.sort-item .drag-handle{color:var(--text-dim);font-size:1.2rem;flex-shrink:0}
+.sort-item.correct{border-color:var(--correct);background:rgba(46,160,67,.08)}
+.sort-item.wrong{border-color:var(--wrong);background:rgba(218,54,51,.08)}
+.sort-item .correct-pos{
+  font-size:.75rem;color:var(--text-dim);margin-left:auto;
+  padding:2px 8px;border-radius:4px;background:rgba(255,255,255,.05);
+}
+
+.phase-footer{display:flex;gap:12px;justify-content:center;width:100%;padding:8px 0}
+
+/* --- RESULTS --- */
+#round-results{gap:20px;padding-top:16px}
+#round-results h3{font-size:1.5rem;font-weight:700;text-align:center}
+.score-display{
+  text-align:center;padding:24px;border-radius:var(--radius);
+  background:linear-gradient(135deg,rgba(28,69,135,.15),rgba(28,69,135,.05));
+  width:100%;
+}
+.score-display .score-num{font-size:3rem;font-weight:900;color:var(--blue-light)}
+.score-display .score-label{font-size:1rem;color:var(--text-dim);margin-top:4px}
+.correct-order-list{width:100%;list-style:none;display:flex;flex-direction:column;gap:6px}
+.correct-order-list li{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 14px;background:var(--card);border-radius:8px;
+  border-left:3px solid var(--blue);
+}
+.correct-order-list .order-num{font-weight:700;color:var(--blue-light);width:24px}
+.correct-order-list .order-label{font-weight:500}
+.correct-order-list .order-value{margin-left:auto;color:var(--text-dim);font-size:.85rem}
+.discussion-box{
+  width:100%;padding:20px;border-radius:var(--radius);
+  background:var(--card);border:1px solid #30363d;
+}
+.discussion-box h4{color:var(--blue-light);margin-bottom:12px;font-size:1rem}
+.discussion-box ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+.discussion-box li{padding-left:16px;position:relative;line-height:1.5;color:var(--text-dim);font-size:.9rem}
+.discussion-box li::before{content:">";position:absolute;left:0;color:var(--blue)}
+
+/* --- FINAL --- */
+#final-screen{justify-content:center;text-align:center;gap:24px}
+#final-screen h2{font-size:2.5rem;font-weight:800}
+.final-score{font-size:4rem;font-weight:900;color:var(--gold)}
+
+/* --- RESPONSIVE --- */
+@media(max-width:600px){
+  .screen{padding:16px}
+  .sort-item{padding:10px 12px}
+  .sort-item .item-label{font-size:.9rem}
+  .leaderboard th,.leaderboard td{padding:8px 6px;font-size:.8rem}
+}
+</style>
+</head>
+<body>
+
+<!-- ======== TITLE SCREEN ======== -->
+<div id="title-screen" class="screen">
+  <div>
+    <h1>SCALE WARS</h1>
+    <p class="subtitle">Put real-world objects, animals, and phenomena in the right order by speed, temperature, mass, and more. Use reasoning, memory, and the fine art of arguing with your teammates.</p>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-primary btn-lg" onclick="showScreen('team-setup')">Join as Team</button>
+    <button class="btn btn-secondary btn-lg" onclick="promptHostPin()">Host Dashboard</button>
+  </div>
+</div>
+
+<!-- ======== TEAM SETUP ======== -->
+<div id="team-setup" class="screen hidden">
+  <h2>Team Name</h2>
+  <p style="color:var(--text-dim)">Pick a name. Gather your teammates. Get ready to argue.</p>
+  <div class="form-row">
+    <input type="text" id="team-name-input" placeholder="e.g. The Neutron Stars" maxlength="30" onkeydown="if(event.key==='Enter')startGame()">
+    <button class="btn btn-primary" onclick="startGame()">Go</button>
+  </div>
+</div>
+
+<!-- ======== HOST DASHBOARD ======== -->
+<div id="host-dashboard" class="screen hidden">
+  <h2>Leaderboard</h2>
+  <div class="host-controls">
+    <div class="host-team-input">
+      <input type="text" id="host-team-input" placeholder="Add team name..." onkeydown="if(event.key==='Enter')hostAddTeam()">
+      <button class="btn btn-primary btn-sm" onclick="hostAddTeam()">Add</button>
+    </div>
+    <button class="btn btn-secondary btn-sm" onclick="hostRecalc()">Update Scores</button>
+    <button class="btn btn-secondary btn-sm" onclick="hostClearAll()">Reset All</button>
+  </div>
+  <div id="leaderboard-container" style="width:100%;overflow-x:auto"></div>
+</div>
+
+<!-- ======== ROUND INTRO ======== -->
+<div id="round-intro" class="screen hidden">
+  <div class="round-number" id="round-label"></div>
+  <h2 id="round-title"></h2>
+  <div class="round-property" id="round-property"></div>
+  <div class="round-direction" id="round-direction"></div>
+  <button class="btn btn-primary btn-lg" onclick="startOrdering()" style="margin-top:24px">Start Round</button>
+</div>
+
+<!-- ======== ORDERING PHASE ======== -->
+<div id="ordering-phase" class="screen hidden">
+  <div class="phase-header">
+    <h3 id="ordering-title"></h3>
+    <div class="timer" id="timer">4:00</div>
+  </div>
+  <p style="color:var(--text-dim);font-size:.85rem;text-align:center" id="ordering-instruction"></p>
+  <ul class="sort-list" id="sort-list"></ul>
+  <div class="phase-footer">
+    <button class="btn btn-primary" id="submit-btn" onclick="submitOrder()">Submit Order</button>
+  </div>
+</div>
+
+<!-- ======== ROUND RESULTS ======== -->
+<div id="round-results" class="screen hidden">
+  <h3 id="results-title"></h3>
+  <div class="score-display">
+    <div class="score-num" id="results-score"></div>
+    <div class="score-label" id="results-score-label"></div>
+    <button class="btn btn-secondary btn-sm" onclick="copyScore()" id="copy-score-btn" style="margin-top:12px">Copy score to clipboard</button>
+  </div>
+  <h4 style="text-align:center;color:var(--text-dim)">Correct Order</h4>
+  <ol class="correct-order-list" id="correct-order-list"></ol>
+  <div class="discussion-box" id="discussion-box">
+    <h4>Discussion</h4>
+    <ul id="discussion-list"></ul>
+  </div>
+  <div class="phase-footer">
+    <button class="btn btn-primary" id="next-round-btn" onclick="nextRound()">Next Round</button>
+  </div>
+</div>
+
+<!-- ======== FINAL SCREEN ======== -->
+<div id="final-screen" class="screen hidden">
+  <h2>Game Over!</h2>
+  <div class="final-score" id="final-total"></div>
+  <p style="color:var(--text-dim)" id="final-label"></p>
+  <div class="discussion-box" style="max-width:500px">
+    <h4>Closing Questions</h4>
+    <ul>
+      <li>Which round was hardest? Why?</li>
+      <li>Where were your intuitions best? Where were they worst?</li>
+      <li>Did arguing with your teammates help or hurt?</li>
+      <li>What's one fact from today that broke your brain?</li>
+    </ul>
+  </div>
+  <button class="btn btn-secondary" onclick="location.reload()">Play Again</button>
+</div>
+
+<script>
+// ============ GAME DATA ============
+const ROUNDS = [
+  {
+    id:"speed",title:"Speed",property:"Top Speed",
+    direction:"Fastest to Slowest",
+    items:[
+      {label:"International Space Station",value:"~28,000 km/h",sort:28000},
+      {label:"Bullet (rifle)",value:"~2,700 km/h",sort:2700},
+      {label:"Speed of sound (in air)",value:"~1,235 km/h",sort:1235},
+      {label:"Peregrine falcon (diving)",value:"~390 km/h",sort:390},
+      {label:"Cheetah",value:"~120 km/h",sort:120},
+      {label:"Sailfish (swimming)",value:"~110 km/h",sort:110},
+      {label:"Usain Bolt",value:"~45 km/h",sort:45},
+      {label:"Garden snail",value:"~0.05 km/h",sort:0.05},
+    ],
+    discussion:[
+      "Most teams get the extremes right (ISS fast, snail slow) but scramble the middle.",
+      "The peregrine falcon in a dive is faster than a cheetah. It's the fastest animal on the planet.",
+      "The sailfish's ~110 km/h is the traditional claim, but a 2016 tracking study found they top out around 35 to 55 km/h. Science updates itself!",
+      "Is Usain Bolt faster than you expected, or slower?",
+    ]
+  },
+  {
+    id:"temperature",title:"Temperature",property:"Temperature",
+    direction:"Hottest to Coldest",
+    items:[
+      {label:"Lightning bolt",value:"~30,000\u00B0C",sort:30000},
+      {label:"Surface of the Sun",value:"~5,500\u00B0C",sort:5500},
+      {label:"Centre of the Earth",value:"~5,400 to 6,000\u00B0C",sort:5700},
+      {label:"A wood fire",value:"~600\u00B0C",sort:600},
+      {label:"Boiling water",value:"100\u00B0C",sort:100},
+      {label:"Human body",value:"37\u00B0C",sort:37},
+      {label:"Liquid nitrogen",value:"-196\u00B0C",sort:-196},
+      {label:"Surface of Pluto",value:"-230\u00B0C",sort:-230},
+      {label:"Absolute zero",value:"-273.15\u00B0C",sort:-273.15},
+    ],
+    discussion:[
+      "Lightning is HOTTER than the surface of the Sun. About 5x hotter.",
+      "The surface of the Sun and the centre of the Earth are almost the same temperature. Wild near-coincidence.",
+      "How close is Pluto's surface to absolute zero? Only about 43 degrees away.",
+      "The Earth's core estimate was revised upward to ~6,000\u00B0C by a 2013 French experiment.",
+    ]
+  },
+  {
+    id:"mass",title:"Mass",property:"Mass",
+    direction:"Heaviest to Lightest",
+    items:[
+      {label:"Teaspoon of neutron star",value:"~6 billion tonnes",sort:6e12},
+      {label:"Blue whale",value:"~150 tonnes",sort:150000},
+      {label:"African elephant",value:"~6 tonnes",sort:6000},
+      {label:"A car (Toyota Corolla)",value:"~1,300 kg",sort:1300},
+      {label:"A grand piano",value:"~500 kg",sort:500},
+      {label:"An adult human",value:"~70 kg",sort:70},
+      {label:"A housecat",value:"~4.5 kg",sort:4.5},
+      {label:"A chicken egg",value:"~60 g",sort:0.06},
+    ],
+    discussion:[
+      "The neutron star teaspoon is the trap. A teaspoon of neutron star outweighs Mount Everest.",
+      "Is a grand piano heavier or lighter than you thought? A baby grand is ~230 kg; a concert grand can hit 590 kg.",
+      "The blue whale is the heaviest animal that has EVER lived, including all dinosaurs.",
+    ]
+  },
+  {
+    id:"age",title:"Time / Age",property:"Age",
+    direction:"Oldest to Youngest",
+    items:[
+      {label:"The universe",value:"~13.8 billion years",sort:13.8e9},
+      {label:"The Sun",value:"~4.6 billion years",sort:4.6e9},
+      {label:"First life on Earth",value:"~3.7 billion years",sort:3.7e9},
+      {label:"Dinosaurs (first appeared)",value:"~230 million years",sort:230e6},
+      {label:"First humans (Homo sapiens)",value:"~300,000 years",sort:300000},
+      {label:"Great Pyramid of Giza",value:"~4,500 years",sort:4500},
+      {label:"The printing press",value:"~580 years (c. 1440)",sort:580},
+      {label:"The internet",value:"~53 years (1973)",sort:53},
+      {label:"TikTok",value:"~9 years (2017)",sort:9},
+    ],
+    discussion:[
+      "Dinosaurs existed for about 165 million years. Humans have existed for 300,000 years. We are a rounding error.",
+      "Printing press to internet: ~530 years. Great Pyramid to printing press: ~3,900 years. The pace of invention is accelerating hard.",
+      "Most teams get the broad order right, but the gaps between items are where it gets interesting.",
+    ]
+  },
+  {
+    id:"distance",title:"Distance",property:"Distance from You",
+    direction:"Farthest to Closest",
+    bonus:true,
+    items:[
+      {label:"Proxima Centauri (nearest star)",value:"~4.2 light-years",sort:4e13},
+      {label:"Edge of solar system (Oort Cloud)",value:"~1.5 light-years",sort:1.4e13},
+      {label:"The Sun",value:"~150 million km",sort:150e6},
+      {label:"Mars (closest approach)",value:"~55 million km",sort:55e6},
+      {label:"The Moon",value:"~384,000 km",sort:384000},
+      {label:"Tokyo (from east coast US)",value:"~11,000 km",sort:11000},
+      {label:"Centre of the Earth",value:"~6,371 km",sort:6371},
+      {label:"The ISS (overhead)",value:"~408 km",sort:408},
+    ],
+    discussion:[
+      "The ISS is closer to you than New York is to Pittsburgh (~500 km). Space is closer than people think.",
+      "Mars at closest approach is closer than the Sun. Does that surprise anyone?",
+      "The Oort Cloud is 1.5 light-years out, and even it is less than halfway to the nearest star.",
+    ]
+  },
+  {
+    id:"volume",title:"Volume",property:"Volume",
+    direction:"Largest to Smallest",
+    rematch:true,
+    items:[
+      {label:"The Mediterranean Sea",value:"~3.75 million km\u00B3",sort:3750000000},
+      {label:"Lake Superior",value:"~12,100 km\u00B3",sort:12100000},
+      {label:"Amazon River (flow per day)",value:"~17 billion m\u00B3/day",sort:17000},
+      {label:"An Olympic swimming pool",value:"2,500 m\u00B3",sort:2.5},
+      {label:"A bathtub",value:"~300 litres",sort:0.3},
+      {label:"A kitchen sink",value:"~30 litres",sort:0.03},
+      {label:"A water balloon",value:"~0.5 litres",sort:0.0005},
+      {label:"A teaspoon",value:"~5 ml",sort:0.000005},
+    ],
+    discussion:[
+      "Lake Superior holds about 12,100 km\u00B3. The Amazon discharges about 17 km\u00B3 per day. It would take the Amazon roughly 2 years to fill Lake Superior.",
+      "How many Olympic pools would fit in Lake Superior? About 4.8 billion.",
+      "The jump from bathtub to Olympic pool is about 8,300x. Pool to Lake Superior is about 4.8 billion x. Our brains are terrible at feeling the difference.",
+      "The Mediterranean connects back to the Zanclean Megaflood: that flood filled 3.75 million km\u00B3 in possibly just a few years.",
+    ]
+  },
+  {
+    id:"loudness",title:"Loudness",property:"Loudness (dB)",
+    direction:"Loudest to Quietest",
+    rematch:true,
+    items:[
+      {label:"Krakatoa eruption (1883)",value:"~310 dB (estimated)",sort:310},
+      {label:"Blue whale call",value:"~188 dB",sort:188},
+      {label:"Jet engine (at 30 m)",value:"~150 dB",sort:150},
+      {label:"A balloon popping",value:"~125 dB",sort:125},
+      {label:"A rock concert",value:"~110 dB",sort:110},
+      {label:"A lawn mower",value:"~90 dB",sort:90},
+      {label:"Normal conversation",value:"~60 dB",sort:60},
+      {label:"A library",value:"~40 dB",sort:40},
+      {label:"A whisper",value:"~30 dB",sort:30},
+    ],
+    discussion:[
+      "Decibels are logarithmic: every 10 dB is roughly DOUBLE the perceived loudness.",
+      "A popping balloon can hit 125 dB. Louder than a rock concert.",
+      "Krakatoa was heard 4,800 km away. The sound wave circled the Earth four times.",
+      "A blue whale's call is louder than a jet engine, but we mostly can't hear it (infrasound).",
+      "Sound becomes dangerous at about 85 dB with prolonged exposure. That's just a loud restaurant.",
+    ]
+  },
+  {
+    id:"brightness",title:"Brightness",property:"Brightness (as seen from Earth)",
+    direction:"Brightest to Dimmest",
+    rematch:true,
+    items:[
+      {label:"The Sun",value:"magnitude -26.7",sort:9},
+      {label:"A supernova (in our galaxy)",value:"up to magnitude -19",sort:8},
+      {label:"A lightning flash",value:"~1 billion candela",sort:7},
+      {label:"A welding arc",value:"~2,000 to 12,000 nits",sort:6},
+      {label:"The full Moon",value:"magnitude -12.7",sort:5},
+      {label:"Venus (brightest planet)",value:"magnitude -4.6",sort:4},
+      {label:"A phone screen (max brightness)",value:"~600 to 800 nits",sort:3},
+      {label:"A candle (at 1 metre)",value:"~1 candela",sort:2},
+      {label:"The Milky Way (dark sky)",value:"surface brightness ~+21 mag",sort:1},
+    ],
+    discussion:[
+      "A supernova in our galaxy would be visible in daylight for weeks. The last one was in 1604. We're overdue.",
+      "A welding arc can cause permanent eye damage in seconds. It's the UV radiation, not just the brightness.",
+      "The Sun is 400,000x brighter than the full Moon. So why does the Moon look so bright at night? Your eyes adapt.",
+    ]
+  },
+  {
+    id:"population",title:"Population",property:"Population",
+    direction:"Most People to Fewest",
+    rematch:true,
+    items:[
+      {label:"Tokyo metro area",value:"~37 million",sort:37e6},
+      {label:"Mumbai metro area",value:"~21 million",sort:21e6},
+      {label:"New York City metro area",value:"~20 million",sort:20e6},
+      {label:"London metro area",value:"~9.7 million",sort:9.7e6},
+      {label:"Iceland (entire country)",value:"~390,000",sort:390000},
+      {label:"Whittier, Alaska (one building)",value:"~200",sort:200},
+      {label:"Your Zoom call right now",value:"~10 to 20",sort:15},
+      {label:"The International Space Station",value:"6 to 7 people",sort:6.5},
+    ],
+    discussion:[
+      "Mumbai and New York are very close. Did anyone get that ordering right?",
+      "The entire country of Iceland has fewer people than most mid-sized American cities.",
+      "Almost all of Whittier, Alaska lives in a single building (Begich Towers). School, post office, grocery store, church.",
+      "Including 'your Zoom call' is a scale anchor. It makes all the other numbers feel more real.",
+    ]
+  },
+  {
+    id:"price",title:"Price",property:"Cost (USD)",
+    direction:"Most Expensive to Cheapest",
+    rematch:true,
+    items:[
+      {label:"International Space Station",value:"~$150 billion",sort:150e9},
+      {label:"A Boeing 747",value:"~$400 million",sort:400e6},
+      {label:"An average US house",value:"~$420,000",sort:420000},
+      {label:"A human kidney (black market)",value:"~$200,000",sort:200000},
+      {label:"A single Bitcoin",value:"~$85,000 (fluctuates)",sort:85000},
+      {label:"A litre of printer ink",value:"~$3,000 to $8,000",sort:5500},
+      {label:"A new iPhone",value:"~$1,000",sort:1000},
+      {label:"A grain of gold",value:"~$4.50",sort:4.50},
+      {label:"A gallon of gasoline",value:"~$3.50",sort:3.50},
+    ],
+    discussion:[
+      "Printer ink, per litre, is more expensive than an iPhone. Razor-and-blades business model.",
+      "A grain of gold is a real unit of weight (about 0.065 grams). Costs about the same as a fast-food meal.",
+      "The ISS cost more than the GDP of most countries. Most expensive object ever built.",
+      "Should a human kidney have a price? (Ethics bonus round. Tread carefully, but it's real.)",
+    ]
+  }
+];
+
+// ============ STATE ============
+let teamName="";
+let currentRound=0;
+let scores=[];
+let timerInterval=null;
+let timeLeft=240;
+let submitted=false;
+let dragSrcIndex=null;
+let currentOrder=[];
+
+// Host state
+let hostTeams=[];
+
+// ============ NAVIGATION ============
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+  window.scrollTo(0,0);
+}
+
+// ============ HOST PIN ============
+const HOST_PIN='6356';
+function promptHostPin(){
+  const pin=prompt('Enter host PIN:');
+  if(pin===null)return;
+  if(pin.trim()===HOST_PIN){
+    showScreen('host-dashboard');
+    renderLeaderboard();
+  }else{
+    alert('Incorrect PIN.');
+  }
+}
+
+// ============ TEAM FLOW ============
+function startGame(){
+  const input=document.getElementById('team-name-input');
+  teamName=input.value.trim();
+  if(!teamName){input.focus();return}
+  currentRound=0;scores=[];
+  showRoundIntro();
+}
+
+function showRoundIntro(){
+  const r=ROUNDS[currentRound];
+  const label = r.bonus ? "Bonus Round" : r.rematch ? `Rematch Round ${currentRound-4}` : `Round ${currentRound+1} of 4`;
+  document.getElementById('round-label').textContent=label;
+  document.getElementById('round-title').textContent=r.title.toUpperCase();
+  document.getElementById('round-property').textContent=r.property;
+  document.getElementById('round-direction').textContent=r.direction;
+  showScreen('round-intro');
+}
+
+function startOrdering(){
+  const r=ROUNDS[currentRound];
+  document.getElementById('ordering-title').textContent=r.title;
+  document.getElementById('ordering-instruction').textContent=`Drag to order: ${r.direction}`;
+  submitted=false;
+  document.getElementById('submit-btn').disabled=false;
+  document.getElementById('submit-btn').textContent='Submit Order';
+
+  // Shuffle items
+  currentOrder=[...r.items];
+  shuffleArray(currentOrder);
+  renderSortList();
+
+  // Start timer
+  timeLeft=240;
+  updateTimerDisplay();
+  clearInterval(timerInterval);
+  timerInterval=setInterval(()=>{
+    timeLeft--;
+    updateTimerDisplay();
+    if(timeLeft<=0){clearInterval(timerInterval);if(!submitted)submitOrder()}
+  },1000);
+
+  showScreen('ordering-phase');
+}
+
+function renderSortList(){
+  const list=document.getElementById('sort-list');
+  list.innerHTML='';
+  currentOrder.forEach((item,i)=>{
+    const li=document.createElement('li');
+    li.className='sort-item';
+    li.setAttribute('data-index',i);
+    li.draggable=true;
+    li.innerHTML=`
+      <span class="rank-num">${i+1}</span>
+      <span class="item-label">${item.label}</span>
+      <span class="drag-handle">\u2261</span>
+    `;
+    // Desktop drag
+    li.addEventListener('dragstart',onDragStart);
+    li.addEventListener('dragover',onDragOver);
+    li.addEventListener('drop',onDrop);
+    li.addEventListener('dragend',onDragEnd);
+    // Touch drag
+    li.addEventListener('touchstart',onTouchStart,{passive:false});
+    li.addEventListener('touchmove',onTouchMove,{passive:false});
+    li.addEventListener('touchend',onTouchEnd);
+    list.appendChild(li);
+  });
+}
+
+// ============ DRAG AND DROP (Desktop) ============
+function onDragStart(e){
+  dragSrcIndex=+this.getAttribute('data-index');
+  this.classList.add('dragging');
+  e.dataTransfer.effectAllowed='move';
+  e.dataTransfer.setData('text/plain',dragSrcIndex);
+}
+function onDragOver(e){e.preventDefault();e.dataTransfer.dropEffect='move'}
+function onDrop(e){
+  e.preventDefault();
+  const targetIndex=+this.getAttribute('data-index');
+  if(dragSrcIndex!==null&&dragSrcIndex!==targetIndex){
+    const moved=currentOrder.splice(dragSrcIndex,1)[0];
+    currentOrder.splice(targetIndex,0,moved);
+    renderSortList();
+  }
+}
+function onDragEnd(){
+  document.querySelectorAll('.sort-item').forEach(el=>el.classList.remove('dragging'));
+  dragSrcIndex=null;
+}
+
+// ============ DRAG AND DROP (Touch) ============
+let touchStartY=0;let touchItem=null;let touchClone=null;let touchStartIndex=null;
+function onTouchStart(e){
+  if(submitted)return;
+  touchItem=this;
+  touchStartIndex=+this.getAttribute('data-index');
+  touchStartY=e.touches[0].clientY;
+  this.classList.add('dragging');
+
+  // Create floating clone
+  touchClone=this.cloneNode(true);
+  touchClone.style.position='fixed';
+  touchClone.style.left='16px';
+  touchClone.style.right='16px';
+  touchClone.style.width=(this.offsetWidth)+'px';
+  touchClone.style.zIndex='9999';
+  touchClone.style.pointerEvents='none';
+  touchClone.style.opacity='0.9';
+  touchClone.style.boxShadow='0 8px 32px rgba(0,0,0,0.5)';
+  const rect=this.getBoundingClientRect();
+  touchClone.style.top=rect.top+'px';
+  document.body.appendChild(touchClone);
+}
+function onTouchMove(e){
+  if(!touchItem)return;
+  e.preventDefault();
+  const touch=e.touches[0];
+  const dy=touch.clientY-touchStartY;
+  if(touchClone){
+    const rect=touchItem.getBoundingClientRect();
+    touchClone.style.top=(rect.top+dy)+'px';
+  }
+  // Find element under finger
+  if(touchClone)touchClone.style.display='none';
+  const el=document.elementFromPoint(touch.clientX,touch.clientY);
+  if(touchClone)touchClone.style.display='';
+  if(el){
+    const li=el.closest('.sort-item');
+    if(li){
+      const targetIdx=+li.getAttribute('data-index');
+      if(targetIdx!==touchStartIndex){
+        const moved=currentOrder.splice(touchStartIndex,1)[0];
+        currentOrder.splice(targetIdx,0,moved);
+        touchStartIndex=targetIdx;
+        renderSortList();
+        // Re-grab the new element
+        const items=document.querySelectorAll('.sort-item');
+        items[targetIdx].classList.add('dragging');
+        touchItem=items[targetIdx];
+        touchStartY=touch.clientY;
+      }
+    }
+  }
+}
+function onTouchEnd(){
+  if(touchClone){touchClone.remove();touchClone=null}
+  document.querySelectorAll('.sort-item').forEach(el=>el.classList.remove('dragging'));
+  touchItem=null;touchStartIndex=null;
+}
+
+// ============ TIMER ============
+function updateTimerDisplay(){
+  const m=Math.floor(timeLeft/60);const s=timeLeft%60;
+  const el=document.getElementById('timer');
+  el.textContent=`${m}:${s.toString().padStart(2,'0')}`;
+  el.className='timer';
+  if(timeLeft<=30)el.classList.add('critical');
+  else if(timeLeft<=60)el.classList.add('warning');
+}
+
+// ============ SUBMIT ============
+function submitOrder(){
+  if(submitted)return;
+  submitted=true;
+  clearInterval(timerInterval);
+  document.getElementById('submit-btn').disabled=true;
+  document.getElementById('submit-btn').textContent='Submitted!';
+
+  const r=ROUNDS[currentRound];
+  const correct=[...r.items]; // already sorted by sort value (descending = first is "most")
+
+  // Calculate adjacent-pairs score
+  let score=0;
+  const maxPairs=currentOrder.length-1;
+  for(let i=0;i<maxPairs;i++){
+    const a=currentOrder[i];
+    const b=currentOrder[i+1];
+    const aCorrectIdx=correct.indexOf(a);
+    const bCorrectIdx=correct.indexOf(b);
+    if(aCorrectIdx<bCorrectIdx)score++;
+  }
+  scores.push(score);
+
+  // Show results
+  showResults(score,maxPairs,correct);
+}
+
+function showResults(score,maxPairs,correct){
+  const r=ROUNDS[currentRound];
+  document.getElementById('results-title').textContent=`${r.title} Results`;
+  document.getElementById('results-score').textContent=`${score} / ${maxPairs}`;
+  document.getElementById('results-score-label').textContent=`adjacent pairs correct`;
+
+  // Show correct order
+  const ol=document.getElementById('correct-order-list');
+  ol.innerHTML='';
+  correct.forEach((item,i)=>{
+    const li=document.createElement('li');
+    li.innerHTML=`<span class="order-num">${i+1}</span><span class="order-label">${item.label}</span><span class="order-value">${item.value}</span>`;
+    li.style.opacity='0';li.style.transform='translateX(-20px)';
+    li.style.transition=`opacity 0.4s ${i*0.1}s, transform 0.4s ${i*0.1}s`;
+    ol.appendChild(li);
+    requestAnimationFrame(()=>{requestAnimationFrame(()=>{li.style.opacity='1';li.style.transform='translateX(0)'})});
+  });
+
+  // Discussion hooks
+  const dl=document.getElementById('discussion-list');
+  dl.innerHTML='';
+  r.discussion.forEach(d=>{
+    const li=document.createElement('li');
+    li.textContent=d;
+    dl.appendChild(li);
+  });
+
+  // Next button text
+  const btn=document.getElementById('next-round-btn');
+  if(currentRound>=ROUNDS.length-1){
+    btn.textContent='See Final Score';
+    btn.onclick=showFinal;
+  }else{
+    btn.textContent='Next Round';
+    btn.onclick=nextRound;
+  }
+
+  showScreen('round-results');
+}
+
+function nextRound(){
+  currentRound++;
+  if(currentRound>=ROUNDS.length){showFinal();return}
+  showRoundIntro();
+}
+
+function showFinal(){
+  const total=scores.reduce((a,b)=>a+b,0);
+  const maxTotal=ROUNDS.reduce((a,r)=>a+r.items.length-1,0);
+  document.getElementById('final-total').textContent=`${total} / ${maxTotal}`;
+  document.getElementById('final-label').textContent=`${teamName}'s total score across ${ROUNDS.length} rounds`;
+  showScreen('final-screen');
+}
+
+// ============ HOST DASHBOARD ============
+function hostAddTeam(){
+  const input=document.getElementById('host-team-input');
+  const name=input.value.trim();
+  if(!name)return;
+  if(hostTeams.find(t=>t.name===name))return;
+  hostTeams.push({name,scores:new Array(ROUNDS.length).fill(null)});
+  input.value='';
+  renderLeaderboard();
+}
+
+function hostClearAll(){
+  if(confirm('Clear all teams and scores?')){hostTeams=[];renderLeaderboard()}
+}
+
+function hostRecalc(){
+  // Read values from inputs
+  document.querySelectorAll('.score-input').forEach(inp=>{
+    const ti=+inp.getAttribute('data-team');
+    const ri=+inp.getAttribute('data-round');
+    const val=inp.value.trim();
+    hostTeams[ti].scores[ri]=val===''?null:+val;
+  });
+  renderLeaderboard();
+}
+
+function renderLeaderboard(){
+  const c=document.getElementById('leaderboard-container');
+  if(hostTeams.length===0){
+    c.innerHTML='<p style="text-align:center;color:var(--text-dim);padding:32px">Add teams to get started.</p>';
+    return;
+  }
+
+  // Calculate totals and sort
+  const teams=hostTeams.map((t,i)=>({
+    ...t,idx:i,
+    total:t.scores.reduce((a,s)=>a+(s||0),0)
+  }));
+  const sorted=[...teams].sort((a,b)=>b.total-a.total);
+
+  // Round headers: only show rounds that have at least one score entered
+  const activeRounds=[];
+  for(let ri=0;ri<ROUNDS.length;ri++){
+    if(hostTeams.some(t=>t.scores[ri]!==null))activeRounds.push(ri);
+  }
+  // Always show at least the first round
+  if(activeRounds.length===0)activeRounds.push(0);
+  // And always show one more than the last scored round for entry
+  const lastActive=Math.max(...activeRounds);
+  if(lastActive<ROUNDS.length-1&&!activeRounds.includes(lastActive+1))activeRounds.push(lastActive+1);
+
+  let html='<table class="leaderboard"><thead><tr><th>#</th><th>Team</th>';
+  activeRounds.forEach(ri=>{
+    const r=ROUNDS[ri];
+    const short=r.title.length>6?r.title.substring(0,6)+'..':r.title;
+    html+=`<th class="round-col" title="${r.title}">R${ri+1}</th>`;
+  });
+  html+='<th class="total-col">Total</th></tr></thead><tbody>';
+
+  sorted.forEach((t,rank)=>{
+    const cls=rank<3?` class="rank-${rank+1}"`:'';
+    html+=`<tr${cls}><td>${rank+1}</td><td class="team-name-cell">${esc(t.name)}</td>`;
+    activeRounds.forEach(ri=>{
+      const val=t.scores[ri];
+      const max=ROUNDS[ri].items.length-1;
+      html+=`<td class="round-cell"><input type="number" class="score-input" data-team="${t.idx}" data-round="${ri}" min="0" max="${max}" value="${val!==null?val:''}" placeholder="-" onchange="hostRecalc()"></td>`;
+    });
+    html+=`<td class="total-cell">${t.total}</td></tr>`;
+  });
+  html+='</tbody></table>';
+  c.innerHTML=html;
+}
+
+// ============ COPY SCORE ============
+function copyScore(){
+  const r=ROUNDS[currentRound];
+  const score=scores[scores.length-1];
+  const maxPairs=r.items.length-1;
+  const text=`${teamName}: ${r.title} = ${score}/${maxPairs}`;
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn=document.getElementById('copy-score-btn');
+    btn.textContent='Copied!';
+    setTimeout(()=>btn.textContent='Copy score to clipboard',2000);
+  }).catch(()=>{
+    // Fallback: select text
+    prompt('Copy this to Zoom chat:',`${teamName}: ${r.title} = ${score}/${maxPairs}`);
+  });
+}
+
+// ============ UTILS ============
+function shuffleArray(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]]=[arr[j],arr[i]];
+  }
+}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+</script>
+</body>
+</html>
