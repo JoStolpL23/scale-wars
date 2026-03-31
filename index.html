@@ -30,6 +30,7 @@ body{display:flex;flex-direction:column;align-items:center}
 .btn-secondary:hover{background:var(--card-hover)}
 .btn-sm{padding:8px 18px;font-size:.85rem}
 .btn-lg{padding:18px 48px;font-size:1.2rem}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
 
 input[type="text"]{
   padding:12px 16px;border:1px solid #30363d;border-radius:var(--radius);
@@ -59,31 +60,24 @@ input[type="number"]:focus{outline:none;border-color:var(--blue)}
 #title-screen .subtitle{font-size:1.1rem;color:var(--text-dim);max-width:500px;line-height:1.6}
 #title-screen .btn-row{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
 
-/* --- TEAM SETUP --- */
-#team-setup{justify-content:center;gap:24px;text-align:center}
-#team-setup h2{font-size:2rem;font-weight:700}
-#team-setup .form-row{display:flex;gap:12px;width:100%;max-width:400px}
+/* --- JOIN SCREEN --- */
+#join-screen{justify-content:center;gap:24px;text-align:center}
+#join-screen h2{font-size:2rem;font-weight:700}
+#join-screen .form-group{display:flex;flex-direction:column;gap:12px;width:100%;max-width:400px}
 
-/* --- HOST DASHBOARD --- */
-#host-dashboard{gap:24px}
-#host-dashboard h2{font-size:2rem;font-weight:700;text-align:center}
-.leaderboard{width:100%;border-collapse:separate;border-spacing:0;border-radius:var(--radius);overflow:hidden}
-.leaderboard thead{background:var(--blue-dark)}
-.leaderboard th{padding:14px 16px;text-align:left;font-weight:600;font-size:.85rem;text-transform:uppercase;letter-spacing:.05em;color:var(--text-dim)}
-.leaderboard th:first-child{width:50px;text-align:center}
-.leaderboard th.round-col{text-align:center;width:60px}
-.leaderboard th.total-col{text-align:center;width:80px;color:var(--gold)}
-.leaderboard td{padding:12px 16px;background:var(--card);border-bottom:1px solid #21262d}
-.leaderboard td:first-child{text-align:center;font-weight:700;color:var(--text-dim)}
-.leaderboard td.round-cell{text-align:center}
-.leaderboard td.round-cell input{width:50px}
-.leaderboard td.total-cell{text-align:center;font-weight:700;font-size:1.1rem;color:var(--gold)}
-.leaderboard tr.rank-1 td:first-child{color:var(--gold)}
-.leaderboard tr.rank-2 td:first-child{color:var(--silver)}
-.leaderboard tr.rank-3 td:first-child{color:var(--bronze)}
-.leaderboard .team-name-cell{font-weight:600;font-size:1rem}
-.host-controls{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;align-items:center}
-.host-team-input{display:flex;gap:8px;align-items:center;width:100%;max-width:400px}
+/* --- LOBBY --- */
+#lobby-screen{justify-content:center;text-align:center;gap:24px}
+#lobby-screen h2{font-size:2rem;font-weight:700}
+.lobby-code{
+  font-size:3rem;font-weight:900;letter-spacing:.2em;color:var(--gold);
+  padding:16px 32px;border-radius:var(--radius);background:var(--card);
+}
+.lobby-teams{width:100%;max-width:400px;text-align:left}
+.lobby-teams h4{color:var(--text-dim);margin-bottom:8px;font-size:.85rem;text-transform:uppercase;letter-spacing:.05em}
+.lobby-team-item{
+  padding:10px 14px;background:var(--card);border-radius:8px;
+  margin-bottom:6px;font-weight:500;border-left:3px solid var(--blue);
+}
 
 /* --- ROUND INTRO --- */
 #round-intro{justify-content:center;text-align:center;gap:24px}
@@ -99,6 +93,11 @@ input[type="number"]:focus{outline:none;border-color:var(--blue)}
 #ordering-phase{gap:16px;padding-top:16px}
 .phase-header{display:flex;justify-content:space-between;align-items:center;width:100%}
 .phase-header h3{font-size:1.2rem;font-weight:600}
+.round-badge{
+  font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;
+  padding:4px 12px;border-radius:999px;background:var(--blue-dark);color:var(--blue-light);
+  margin-left:8px;
+}
 .timer{
   font-size:1.4rem;font-weight:700;font-variant-numeric:tabular-nums;
   padding:8px 20px;border-radius:999px;background:var(--card);
@@ -130,47 +129,95 @@ input[type="number"]:focus{outline:none;border-color:var(--blue)}
 }
 .sort-item .item-label{flex:1;font-weight:500;font-size:1rem}
 .sort-item .drag-handle{color:var(--text-dim);font-size:1.2rem;flex-shrink:0}
-.sort-item.correct{border-color:var(--correct);background:rgba(46,160,67,.08)}
-.sort-item.wrong{border-color:var(--wrong);background:rgba(218,54,51,.08)}
-.sort-item .correct-pos{
-  font-size:.75rem;color:var(--text-dim);margin-left:auto;
-  padding:2px 8px;border-radius:4px;background:rgba(255,255,255,.05);
-}
 
-.phase-footer{display:flex;gap:12px;justify-content:center;width:100%;padding:8px 0}
-
-/* --- RESULTS --- */
-#round-results{gap:20px;padding-top:16px}
-#round-results h3{font-size:1.5rem;font-weight:700;text-align:center}
-.score-display{
-  text-align:center;padding:24px;border-radius:var(--radius);
-  background:linear-gradient(135deg,rgba(28,69,135,.15),rgba(28,69,135,.05));
-  width:100%;
+/* --- WAITING SCREEN --- */
+#waiting-screen{justify-content:center;text-align:center;gap:24px}
+#waiting-screen h2{font-size:2rem;font-weight:700}
+.waiting-progress{font-size:1.2rem;color:var(--text-dim)}
+.waiting-spinner{
+  width:40px;height:40px;border:3px solid var(--card);border-top-color:var(--blue-light);
+  border-radius:50%;animation:spin 1s linear infinite;
 }
-.score-display .score-num{font-size:3rem;font-weight:900;color:var(--blue-light)}
-.score-display .score-label{font-size:1rem;color:var(--text-dim);margin-top:4px}
-.correct-order-list{width:100%;list-style:none;display:flex;flex-direction:column;gap:6px}
-.correct-order-list li{
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* --- ROUND LEADERBOARD (team view) --- */
+#round-leaderboard{justify-content:center;text-align:center;gap:24px}
+#round-leaderboard h2{font-size:2rem;font-weight:700}
+#round-leaderboard h3{font-size:1.2rem;color:var(--text-dim);font-weight:400}
+.round-lb-list{width:100%;max-width:500px;display:flex;flex-direction:column;gap:8px}
+.round-lb-item{
   display:flex;align-items:center;gap:12px;
-  padding:10px 14px;background:var(--card);border-radius:8px;
+  padding:14px 16px;background:var(--card);border-radius:var(--radius);
+}
+.round-lb-item.my-team{border:2px solid var(--blue);background:rgba(28,69,135,.1)}
+.round-lb-rank{
+  width:32px;height:32px;border-radius:50%;
+  background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:.85rem;flex-shrink:0;
+}
+.round-lb-item:nth-child(1) .round-lb-rank{color:var(--gold)}
+.round-lb-item:nth-child(2) .round-lb-rank{color:var(--silver)}
+.round-lb-item:nth-child(3) .round-lb-rank{color:var(--bronze)}
+.round-lb-name{flex:1;font-weight:600;text-align:left}
+.round-lb-score{font-weight:700;color:var(--blue-light);font-size:1.1rem}
+
+/* --- TOURNAMENT COMPLETE (team view) --- */
+#complete-screen{justify-content:center;text-align:center;gap:24px}
+#complete-screen h2{font-size:2.5rem;font-weight:800}
+.final-score{font-size:4rem;font-weight:900;color:var(--gold)}
+
+/* --- HOST DASHBOARD --- */
+#host-dashboard{gap:24px}
+#host-dashboard h2{font-size:2rem;font-weight:700;text-align:center}
+.host-game-code{text-align:center;margin-bottom:8px}
+.host-game-code span{
+  font-size:2rem;font-weight:900;letter-spacing:.15em;color:var(--gold);
+}
+.host-status{text-align:center;color:var(--text-dim);font-size:.9rem;margin-bottom:8px}
+.host-controls{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;align-items:center}
+
+.leaderboard{width:100%;border-collapse:separate;border-spacing:0;border-radius:var(--radius);overflow:hidden}
+.leaderboard thead{background:var(--blue-dark)}
+.leaderboard th{padding:14px 16px;text-align:left;font-weight:600;font-size:.85rem;text-transform:uppercase;letter-spacing:.05em;color:var(--text-dim)}
+.leaderboard th:first-child{width:50px;text-align:center}
+.leaderboard th.round-col{text-align:center;width:60px}
+.leaderboard th.total-col{text-align:center;width:80px;color:var(--gold)}
+.leaderboard td{padding:12px 16px;background:var(--card);border-bottom:1px solid #21262d}
+.leaderboard td:first-child{text-align:center;font-weight:700;color:var(--text-dim)}
+.leaderboard td.round-cell{text-align:center;font-variant-numeric:tabular-nums}
+.leaderboard td.total-cell{text-align:center;font-weight:700;font-size:1.1rem;color:var(--gold)}
+.leaderboard tr.rank-1 td:first-child{color:var(--gold)}
+.leaderboard tr.rank-2 td:first-child{color:var(--silver)}
+.leaderboard tr.rank-3 td:first-child{color:var(--bronze)}
+.leaderboard .team-name-cell{font-weight:600;font-size:1rem}
+
+/* --- HOST RESULTS (post-tournament review) --- */
+.host-results-panel{width:100%;margin-top:16px}
+.host-round-result{
+  background:var(--card);border-radius:var(--radius);padding:20px;margin-bottom:16px;
   border-left:3px solid var(--blue);
 }
-.correct-order-list .order-num{font-weight:700;color:var(--blue-light);width:24px}
-.correct-order-list .order-label{font-weight:500}
-.correct-order-list .order-value{margin-left:auto;color:var(--text-dim);font-size:.85rem}
-.discussion-box{
-  width:100%;padding:20px;border-radius:var(--radius);
-  background:var(--card);border:1px solid #30363d;
+.host-round-result h4{color:var(--blue-light);margin-bottom:12px;font-size:1.1rem}
+.host-round-result .correct-order{margin-bottom:12px}
+.host-round-result .correct-order li{
+  padding:6px 0;color:var(--text-dim);font-size:.9rem;
+  display:flex;gap:8px;align-items:center;
 }
-.discussion-box h4{color:var(--blue-light);margin-bottom:12px;font-size:1rem}
-.discussion-box ul{list-style:none;display:flex;flex-direction:column;gap:8px}
-.discussion-box li{padding-left:16px;position:relative;line-height:1.5;color:var(--text-dim);font-size:.9rem}
-.discussion-box li::before{content:">";position:absolute;left:0;color:var(--blue)}
-
-/* --- FINAL --- */
-#final-screen{justify-content:center;text-align:center;gap:24px}
-#final-screen h2{font-size:2.5rem;font-weight:800}
-.final-score{font-size:4rem;font-weight:900;color:var(--gold)}
+.host-round-result .correct-order .order-num{font-weight:700;color:var(--blue-light);width:24px}
+.host-round-result .correct-order .order-label{font-weight:500;color:var(--text)}
+.host-round-result .correct-order .order-value{margin-left:auto;font-size:.8rem}
+.host-round-result .discussion-hooks{margin-top:12px}
+.host-round-result .discussion-hooks li{
+  padding:4px 0 4px 16px;position:relative;line-height:1.5;color:var(--text-dim);font-size:.85rem;
+}
+.host-round-result .discussion-hooks li::before{content:">";position:absolute;left:0;color:var(--blue)}
+.host-round-rankings{margin-top:8px}
+.host-round-rankings .rank-row{
+  display:flex;gap:8px;align-items:center;padding:4px 0;font-size:.85rem;
+}
+.host-round-rankings .rank-pos{width:20px;font-weight:700;color:var(--text-dim)}
+.host-round-rankings .rank-name{flex:1}
+.host-round-rankings .rank-score{font-weight:600;color:var(--blue-light)}
 
 /* --- RESPONSIVE --- */
 @media(max-width:600px){
@@ -190,33 +237,41 @@ input[type="number"]:focus{outline:none;border-color:var(--blue)}
     <p class="subtitle">Put real-world objects, animals, and phenomena in the right order by speed, temperature, mass, and more. Use reasoning, memory, and the fine art of arguing with your teammates.</p>
   </div>
   <div class="btn-row">
-    <button class="btn btn-primary btn-lg" onclick="showScreen('team-setup')">Join as Team</button>
-    <button class="btn btn-secondary btn-lg" onclick="promptHostPin()">Host Dashboard</button>
+    <button class="btn btn-primary btn-lg" onclick="showScreen('join-screen')">Join Game</button>
+    <button class="btn btn-secondary btn-lg" onclick="showScreen('host-login')">Host Dashboard</button>
   </div>
 </div>
 
-<!-- ======== TEAM SETUP ======== -->
-<div id="team-setup" class="screen hidden">
-  <h2>Team Name</h2>
-  <p style="color:var(--text-dim)">Pick a name. Gather your teammates. Get ready to argue.</p>
-  <div class="form-row">
-    <input type="text" id="team-name-input" placeholder="e.g. The Neutron Stars" maxlength="30" onkeydown="if(event.key==='Enter')startGame()">
-    <button class="btn btn-primary" onclick="startGame()">Go</button>
+<!-- ======== JOIN SCREEN ======== -->
+<div id="join-screen" class="screen hidden">
+  <h2>Join a Game</h2>
+  <p style="color:var(--text-dim)">Enter the game code from your host and pick a team name.</p>
+  <div class="form-group">
+    <input type="text" id="join-code" placeholder="Game code (e.g. AB3XY7)" maxlength="6" style="text-transform:uppercase;text-align:center;font-size:1.5rem;letter-spacing:.15em;font-weight:700">
+    <input type="text" id="join-team" placeholder="Team name" maxlength="30">
+    <button class="btn btn-primary" id="join-btn" onclick="joinGame()">Join</button>
+    <p id="join-error" style="color:var(--wrong);font-size:.9rem" class="hidden"></p>
   </div>
+  <button class="btn btn-secondary btn-sm" onclick="showScreen('title-screen')" style="margin-top:16px">Back</button>
 </div>
 
-<!-- ======== HOST DASHBOARD ======== -->
-<div id="host-dashboard" class="screen hidden">
-  <h2>Leaderboard</h2>
-  <div class="host-controls">
-    <div class="host-team-input">
-      <input type="text" id="host-team-input" placeholder="Add team name..." onkeydown="if(event.key==='Enter')hostAddTeam()">
-      <button class="btn btn-primary btn-sm" onclick="hostAddTeam()">Add</button>
-    </div>
-    <button class="btn btn-secondary btn-sm" onclick="hostRecalc()">Update Scores</button>
-    <button class="btn btn-secondary btn-sm" onclick="hostClearAll()">Reset All</button>
+<!-- ======== HOST LOGIN ======== -->
+<div id="host-login" class="screen hidden" style="justify-content:center;text-align:center;gap:24px">
+  <h2>Host Dashboard</h2>
+  <div class="form-group" style="max-width:300px;margin:0 auto">
+    <input type="text" id="host-pin-input" placeholder="Enter host PIN" maxlength="10" style="text-align:center" onkeydown="if(event.key==='Enter')hostLogin()">
+    <button class="btn btn-primary" onclick="hostLogin()">Enter</button>
+    <p id="host-pin-error" style="color:var(--wrong);font-size:.9rem" class="hidden"></p>
   </div>
-  <div id="leaderboard-container" style="width:100%;overflow-x:auto"></div>
+  <button class="btn btn-secondary btn-sm" onclick="showScreen('title-screen')">Back</button>
+</div>
+
+<!-- ======== TEAM LOBBY ======== -->
+<div id="lobby-screen" class="screen hidden">
+  <h2>Waiting for Host</h2>
+  <div class="waiting-spinner"></div>
+  <p style="color:var(--text-dim)">You're in! Waiting for the host to start the first round.</p>
+  <div class="lobby-teams" id="lobby-teams-list"></div>
 </div>
 
 <!-- ======== ROUND INTRO ======== -->
@@ -231,53 +286,53 @@ input[type="number"]:focus{outline:none;border-color:var(--blue)}
 <!-- ======== ORDERING PHASE ======== -->
 <div id="ordering-phase" class="screen hidden">
   <div class="phase-header">
-    <h3 id="ordering-title"></h3>
+    <h3><span id="ordering-title"></span><span class="round-badge" id="ordering-round-badge"></span></h3>
     <div class="timer" id="timer">4:00</div>
   </div>
   <p style="color:var(--text-dim);font-size:.85rem;text-align:center" id="ordering-instruction"></p>
   <ul class="sort-list" id="sort-list"></ul>
-  <div class="phase-footer">
-    <button class="btn btn-primary" id="submit-btn" onclick="submitOrder()">Submit Order</button>
-  </div>
 </div>
 
-<!-- ======== ROUND RESULTS ======== -->
-<div id="round-results" class="screen hidden">
-  <h3 id="results-title"></h3>
-  <div class="score-display">
-    <div class="score-num" id="results-score"></div>
-    <div class="score-label" id="results-score-label"></div>
-    <button class="btn btn-secondary btn-sm" onclick="copyScore()" id="copy-score-btn" style="margin-top:12px">Copy score to clipboard</button>
-  </div>
-  <h4 style="text-align:center;color:var(--text-dim)">Correct Order</h4>
-  <ol class="correct-order-list" id="correct-order-list"></ol>
-  <div class="discussion-box" id="discussion-box">
-    <h4>Discussion</h4>
-    <ul id="discussion-list"></ul>
-  </div>
-  <div class="phase-footer">
-    <button class="btn btn-primary" id="next-round-btn" onclick="nextRound()">Next Round</button>
-  </div>
+<!-- ======== WAITING SCREEN ======== -->
+<div id="waiting-screen" class="screen hidden">
+  <h2>Order Locked!</h2>
+  <div class="waiting-spinner"></div>
+  <p class="waiting-progress" id="waiting-progress">Waiting for other teams...</p>
 </div>
 
-<!-- ======== FINAL SCREEN ======== -->
-<div id="final-screen" class="screen hidden">
-  <h2>Game Over!</h2>
-  <div class="final-score" id="final-total"></div>
-  <p style="color:var(--text-dim)" id="final-label"></p>
-  <div class="discussion-box" style="max-width:500px">
-    <h4>Closing Questions</h4>
-    <ul>
-      <li>Which round was hardest? Why?</li>
-      <li>Where were your intuitions best? Where were they worst?</li>
-      <li>Did arguing with your teammates help or hurt?</li>
-      <li>What's one fact from today that broke your brain?</li>
-    </ul>
-  </div>
-  <button class="btn btn-secondary" onclick="location.reload()">Play Again</button>
+<!-- ======== ROUND LEADERBOARD (team view) ======== -->
+<div id="round-leaderboard" class="screen hidden">
+  <h2 id="round-lb-title">Round Leaderboard</h2>
+  <h3 id="round-lb-subtitle"></h3>
+  <div class="round-lb-list" id="round-lb-list"></div>
+</div>
+
+<!-- ======== TOURNAMENT COMPLETE (team view) ======== -->
+<div id="complete-screen" class="screen hidden">
+  <h2>Tournament Complete!</h2>
+  <div class="final-score" id="team-final-score"></div>
+  <p style="color:var(--text-dim)" id="team-final-label"></p>
+  <p style="color:var(--text-dim);margin-top:16px">Watch the host screen for the final results.</p>
+</div>
+
+<!-- ======== HOST DASHBOARD ======== -->
+<div id="host-dashboard" class="screen hidden">
+  <h2>Host Dashboard</h2>
+  <div class="host-game-code" id="host-game-code-display"></div>
+  <div class="host-status" id="host-status"></div>
+  <div class="host-controls" id="host-controls"></div>
+  <div id="host-leaderboard-container" style="width:100%;overflow-x:auto"></div>
+  <div class="host-results-panel hidden" id="host-results-panel"></div>
 </div>
 
 <script>
+// ============ CONFIGURATION ============
+const API_URL = 'https://script.google.com/macros/s/AKfycbyZT9Mh9rb8HH9Khu-500TzA9H-JtasX5qBhdUz6HsSaFpulilUWdy4Z8wOyff85Q-eUA/exec';
+const HOST_PIN = '6356';
+const TOTAL_ROUNDS = 10;
+const ROUND_TIME = 240; // 4 minutes
+const POLL_INTERVAL = 2500; // 2.5 seconds
+
 // ============ GAME DATA ============
 const ROUNDS = [
   {
@@ -363,7 +418,6 @@ const ROUNDS = [
   {
     id:"distance",title:"Distance",property:"Distance from You",
     direction:"Farthest to Closest",
-    bonus:true,
     items:[
       {label:"Proxima Centauri (nearest star)",value:"~4.2 light-years",sort:4e13},
       {label:"Edge of solar system (Oort Cloud)",value:"~1.5 light-years",sort:1.4e13},
@@ -383,7 +437,6 @@ const ROUNDS = [
   {
     id:"volume",title:"Volume",property:"Volume",
     direction:"Largest to Smallest",
-    rematch:true,
     items:[
       {label:"The Mediterranean Sea",value:"~3.75 million km\u00B3",sort:3750000000},
       {label:"Lake Superior",value:"~12,100 km\u00B3",sort:12100000},
@@ -404,7 +457,6 @@ const ROUNDS = [
   {
     id:"loudness",title:"Loudness",property:"Loudness (dB)",
     direction:"Loudest to Quietest",
-    rematch:true,
     items:[
       {label:"Krakatoa eruption (1883)",value:"~310 dB (estimated)",sort:310},
       {label:"Blue whale call",value:"~188 dB",sort:188},
@@ -427,7 +479,6 @@ const ROUNDS = [
   {
     id:"brightness",title:"Brightness",property:"Brightness (as seen from Earth)",
     direction:"Brightest to Dimmest",
-    rematch:true,
     items:[
       {label:"The Sun",value:"magnitude -26.7",sort:9},
       {label:"A supernova (in our galaxy)",value:"up to magnitude -19",sort:8},
@@ -448,7 +499,6 @@ const ROUNDS = [
   {
     id:"population",title:"Population",property:"Population",
     direction:"Most People to Fewest",
-    rematch:true,
     items:[
       {label:"Tokyo metro area",value:"~37 million",sort:37e6},
       {label:"Mumbai metro area",value:"~21 million",sort:21e6},
@@ -469,7 +519,6 @@ const ROUNDS = [
   {
     id:"price",title:"Price",property:"Cost (USD)",
     direction:"Most Expensive to Cheapest",
-    rematch:true,
     items:[
       {label:"International Space Station",value:"~$150 billion",sort:150e9},
       {label:"A Boeing 747",value:"~$400 million",sort:400e6},
@@ -491,379 +540,577 @@ const ROUNDS = [
 ];
 
 // ============ STATE ============
-let teamName="";
-let currentRound=0;
-let scores=[];
-let timerInterval=null;
-let timeLeft=240;
-let submitted=false;
-let dragSrcIndex=null;
-let currentOrder=[];
+let gameCode = '';
+let teamName = '';
+let gameSeed = 0;
+let currentRound = -1;
+let currentOrder = [];
+let timerInterval = null;
+let timeLeft = ROUND_TIME;
+let submitted = false;
+let pollInterval = null;
+let isHost = false;
+let lastState = '';
+let lastRound = -1;
+let teamScores = []; // local record of our scores
 
-// Host state
-let hostTeams=[];
-
-// ============ NAVIGATION ============
-function showScreen(id){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));
-  document.getElementById(id).classList.remove('hidden');
-  window.scrollTo(0,0);
+// ============ SEEDED RANDOM ============
+function seededRandom(seed) {
+  // Simple mulberry32 PRNG
+  return function() {
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
 }
 
-// ============ HOST PIN ============
-const HOST_PIN='6356';
-function promptHostPin(){
-  const pin=prompt('Enter host PIN:');
-  if(pin===null)return;
-  if(pin.trim()===HOST_PIN){
-    showScreen('host-dashboard');
-    renderLeaderboard();
-  }else{
-    alert('Incorrect PIN.');
+function seededShuffle(arr, seed) {
+  const rng = seededRandom(seed);
+  const shuffled = [...arr];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
+// ============ API HELPER ============
+async function api(action, params = {}) {
+  const url = new URL(API_URL);
+  url.searchParams.set('action', action);
+  for (const [k, v] of Object.entries(params)) {
+    url.searchParams.set(k, v);
+  }
+  try {
+    const resp = await fetch(url.toString());
+    return await resp.json();
+  } catch (err) {
+    console.error('API error:', err);
+    return { error: err.message };
   }
 }
 
-// ============ TEAM FLOW ============
-function startGame(){
-  const input=document.getElementById('team-name-input');
-  teamName=input.value.trim();
-  if(!teamName){input.focus();return}
-  currentRound=0;scores=[];
-  showRoundIntro();
+// ============ NAVIGATION ============
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+  window.scrollTo(0, 0);
 }
 
-function showRoundIntro(){
-  const r=ROUNDS[currentRound];
-  const label = r.bonus ? "Bonus Round" : r.rematch ? `Rematch Round ${currentRound-4}` : `Round ${currentRound+1} of 4`;
-  document.getElementById('round-label').textContent=label;
-  document.getElementById('round-title').textContent=r.title.toUpperCase();
-  document.getElementById('round-property').textContent=r.property;
-  document.getElementById('round-direction').textContent=r.direction;
+// ============ TEAM FLOW ============
+async function joinGame() {
+  const codeInput = document.getElementById('join-code');
+  const teamInput = document.getElementById('join-team');
+  const errEl = document.getElementById('join-error');
+  const btn = document.getElementById('join-btn');
+
+  const code = codeInput.value.trim().toUpperCase();
+  const name = teamInput.value.trim();
+
+  if (!code || code.length < 4) {
+    errEl.textContent = 'Enter the game code from your host.';
+    errEl.classList.remove('hidden');
+    return;
+  }
+  if (!name) {
+    errEl.textContent = 'Pick a team name.';
+    errEl.classList.remove('hidden');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Joining...';
+  errEl.classList.add('hidden');
+
+  const result = await api('joinGame', { code: code, team: name });
+
+  if (result.error) {
+    errEl.textContent = result.error;
+    errEl.classList.remove('hidden');
+    btn.disabled = false;
+    btn.textContent = 'Join';
+    return;
+  }
+
+  gameCode = code;
+  teamName = name;
+  gameSeed = result.seed;
+  isHost = false;
+  teamScores = [];
+
+  showScreen('lobby-screen');
+  startPolling();
+}
+
+// ============ HOST FLOW ============
+async function hostLogin() {
+  const pinInput = document.getElementById('host-pin-input');
+  const errEl = document.getElementById('host-pin-error');
+  const pin = pinInput.value.trim();
+
+  if (pin !== HOST_PIN) {
+    errEl.textContent = 'Incorrect PIN.';
+    errEl.classList.remove('hidden');
+    return;
+  }
+
+  isHost = true;
+  errEl.classList.add('hidden');
+
+  // Create a new game
+  const result = await api('createGame', { pin: HOST_PIN });
+  if (result.error) {
+    errEl.textContent = result.error;
+    errEl.classList.remove('hidden');
+    return;
+  }
+
+  gameCode = result.gameCode;
+  gameSeed = result.seed;
+
+  showScreen('host-dashboard');
+  renderHostDashboard('lobby', -1, [], null);
+  startPolling();
+}
+
+// ============ POLLING ============
+function startPolling() {
+  if (pollInterval) clearInterval(pollInterval);
+  pollInterval = setInterval(pollState, POLL_INTERVAL);
+  pollState(); // immediate first poll
+}
+
+function stopPolling() {
+  if (pollInterval) { clearInterval(pollInterval); pollInterval = null; }
+}
+
+async function pollState() {
+  const result = await api('getState', { code: gameCode, team: teamName });
+  if (result.error) return;
+
+  const state = result.state;
+  const round = result.currentRound;
+
+  if (isHost) {
+    renderHostDashboard(state, round, result.teams, result.roundLeaderboard);
+  } else {
+    handleTeamState(state, round, result);
+  }
+
+  lastState = state;
+  lastRound = round;
+}
+
+// ============ TEAM STATE HANDLER ============
+function handleTeamState(state, round, data) {
+  if (state === 'lobby') {
+    // Update lobby team list
+    if (currentScreenIs('lobby-screen')) {
+      renderLobbyTeams(data.teams);
+    }
+  } else if (state === 'playing') {
+    if (round !== lastRound || lastState !== 'playing') {
+      // New round started
+      submitted = false;
+      currentRound = round;
+      showRoundIntro();
+    }
+    // If we're on the waiting screen, update progress
+    if (submitted && currentScreenIs('waiting-screen')) {
+      document.getElementById('waiting-progress').textContent =
+        `${data.submittedCount} of ${data.totalTeams} teams done...`;
+    }
+  } else if (state === 'leaderboard') {
+    if (lastState !== 'leaderboard' || round !== lastRound) {
+      currentRound = round;
+      showRoundLeaderboard(data.roundLeaderboard, round);
+    }
+  } else if (state === 'finished') {
+    if (lastState !== 'finished') {
+      showTeamComplete(data.teams);
+    }
+  }
+}
+
+function currentScreenIs(id) {
+  return !document.getElementById(id).classList.contains('hidden');
+}
+
+function renderLobbyTeams(teams) {
+  const container = document.getElementById('lobby-teams-list');
+  if (teams.length === 0) {
+    container.innerHTML = '';
+    return;
+  }
+  container.innerHTML = '<h4>Teams joined</h4>' +
+    teams.map(t => `<div class="lobby-team-item">${esc(t.name)}</div>`).join('');
+}
+
+// ============ ROUND INTRO (team view) ============
+function showRoundIntro() {
+  const r = ROUNDS[currentRound];
+  document.getElementById('round-label').textContent = `Round ${currentRound + 1} of ${TOTAL_ROUNDS}`;
+  document.getElementById('round-title').textContent = r.title.toUpperCase();
+  document.getElementById('round-property').textContent = r.property;
+  document.getElementById('round-direction').textContent = r.direction;
   showScreen('round-intro');
 }
 
-function startOrdering(){
-  const r=ROUNDS[currentRound];
-  document.getElementById('ordering-title').textContent=r.title;
-  document.getElementById('ordering-instruction').textContent=`Drag to order: ${r.direction}`;
-  submitted=false;
-  document.getElementById('submit-btn').disabled=false;
-  document.getElementById('submit-btn').textContent='Submit Order';
+// ============ ORDERING ============
+function startOrdering() {
+  const r = ROUNDS[currentRound];
+  document.getElementById('ordering-title').textContent = r.title;
+  document.getElementById('ordering-round-badge').textContent = `Round ${currentRound + 1}/${TOTAL_ROUNDS}`;
+  document.getElementById('ordering-instruction').textContent = `Drag to order: ${r.direction}`;
+  submitted = false;
 
-  // Shuffle items
-  currentOrder=[...r.items];
-  shuffleArray(currentOrder);
+  // Seeded shuffle: seed + round index for unique but deterministic order per round
+  const roundSeed = gameSeed + currentRound * 9973;
+  currentOrder = seededShuffle([...r.items], roundSeed);
   renderSortList();
 
   // Start timer
-  timeLeft=240;
+  timeLeft = ROUND_TIME;
   updateTimerDisplay();
   clearInterval(timerInterval);
-  timerInterval=setInterval(()=>{
+  timerInterval = setInterval(() => {
     timeLeft--;
     updateTimerDisplay();
-    if(timeLeft<=0){clearInterval(timerInterval);if(!submitted)submitOrder()}
-  },1000);
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      if (!submitted) autoSubmit();
+    }
+  }, 1000);
 
   showScreen('ordering-phase');
 }
 
-function renderSortList(){
-  const list=document.getElementById('sort-list');
-  list.innerHTML='';
-  currentOrder.forEach((item,i)=>{
-    const li=document.createElement('li');
-    li.className='sort-item';
-    li.setAttribute('data-index',i);
-    li.draggable=true;
-    li.innerHTML=`
-      <span class="rank-num">${i+1}</span>
+function renderSortList() {
+  const list = document.getElementById('sort-list');
+  list.innerHTML = '';
+  currentOrder.forEach((item, i) => {
+    const li = document.createElement('li');
+    li.className = 'sort-item';
+    li.setAttribute('data-index', i);
+    li.draggable = true;
+    li.innerHTML = `
+      <span class="rank-num">${i + 1}</span>
       <span class="item-label">${item.label}</span>
       <span class="drag-handle">\u2261</span>
     `;
-    // Desktop drag
-    li.addEventListener('dragstart',onDragStart);
-    li.addEventListener('dragover',onDragOver);
-    li.addEventListener('drop',onDrop);
-    li.addEventListener('dragend',onDragEnd);
-    // Touch drag
-    li.addEventListener('touchstart',onTouchStart,{passive:false});
-    li.addEventListener('touchmove',onTouchMove,{passive:false});
-    li.addEventListener('touchend',onTouchEnd);
+    li.addEventListener('dragstart', onDragStart);
+    li.addEventListener('dragover', onDragOver);
+    li.addEventListener('drop', onDrop);
+    li.addEventListener('dragend', onDragEnd);
+    li.addEventListener('touchstart', onTouchStart, {passive: false});
+    li.addEventListener('touchmove', onTouchMove, {passive: false});
+    li.addEventListener('touchend', onTouchEnd);
     list.appendChild(li);
   });
 }
 
 // ============ DRAG AND DROP (Desktop) ============
-function onDragStart(e){
-  dragSrcIndex=+this.getAttribute('data-index');
+let dragSrcIndex = null;
+function onDragStart(e) {
+  if (submitted) { e.preventDefault(); return; }
+  dragSrcIndex = +this.getAttribute('data-index');
   this.classList.add('dragging');
-  e.dataTransfer.effectAllowed='move';
-  e.dataTransfer.setData('text/plain',dragSrcIndex);
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', dragSrcIndex);
 }
-function onDragOver(e){e.preventDefault();e.dataTransfer.dropEffect='move'}
-function onDrop(e){
+function onDragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; }
+function onDrop(e) {
   e.preventDefault();
-  const targetIndex=+this.getAttribute('data-index');
-  if(dragSrcIndex!==null&&dragSrcIndex!==targetIndex){
-    const moved=currentOrder.splice(dragSrcIndex,1)[0];
-    currentOrder.splice(targetIndex,0,moved);
+  const targetIndex = +this.getAttribute('data-index');
+  if (dragSrcIndex !== null && dragSrcIndex !== targetIndex) {
+    const moved = currentOrder.splice(dragSrcIndex, 1)[0];
+    currentOrder.splice(targetIndex, 0, moved);
     renderSortList();
   }
 }
-function onDragEnd(){
-  document.querySelectorAll('.sort-item').forEach(el=>el.classList.remove('dragging'));
-  dragSrcIndex=null;
+function onDragEnd() {
+  document.querySelectorAll('.sort-item').forEach(el => el.classList.remove('dragging'));
+  dragSrcIndex = null;
 }
 
 // ============ DRAG AND DROP (Touch) ============
-let touchStartY=0;let touchItem=null;let touchClone=null;let touchStartIndex=null;
-function onTouchStart(e){
-  if(submitted)return;
-  touchItem=this;
-  touchStartIndex=+this.getAttribute('data-index');
-  touchStartY=e.touches[0].clientY;
+let touchStartY = 0, touchItem = null, touchClone = null, touchStartIndex = null;
+function onTouchStart(e) {
+  if (submitted) return;
+  touchItem = this;
+  touchStartIndex = +this.getAttribute('data-index');
+  touchStartY = e.touches[0].clientY;
   this.classList.add('dragging');
-
-  // Create floating clone
-  touchClone=this.cloneNode(true);
-  touchClone.style.position='fixed';
-  touchClone.style.left='16px';
-  touchClone.style.right='16px';
-  touchClone.style.width=(this.offsetWidth)+'px';
-  touchClone.style.zIndex='9999';
-  touchClone.style.pointerEvents='none';
-  touchClone.style.opacity='0.9';
-  touchClone.style.boxShadow='0 8px 32px rgba(0,0,0,0.5)';
-  const rect=this.getBoundingClientRect();
-  touchClone.style.top=rect.top+'px';
+  touchClone = this.cloneNode(true);
+  touchClone.style.position = 'fixed';
+  touchClone.style.left = '16px';
+  touchClone.style.right = '16px';
+  touchClone.style.width = (this.offsetWidth) + 'px';
+  touchClone.style.zIndex = '9999';
+  touchClone.style.pointerEvents = 'none';
+  touchClone.style.opacity = '0.9';
+  touchClone.style.boxShadow = '0 8px 32px rgba(0,0,0,0.5)';
+  const rect = this.getBoundingClientRect();
+  touchClone.style.top = rect.top + 'px';
   document.body.appendChild(touchClone);
 }
-function onTouchMove(e){
-  if(!touchItem)return;
+function onTouchMove(e) {
+  if (!touchItem) return;
   e.preventDefault();
-  const touch=e.touches[0];
-  const dy=touch.clientY-touchStartY;
-  if(touchClone){
-    const rect=touchItem.getBoundingClientRect();
-    touchClone.style.top=(rect.top+dy)+'px';
+  const touch = e.touches[0];
+  const dy = touch.clientY - touchStartY;
+  if (touchClone) {
+    const rect = touchItem.getBoundingClientRect();
+    touchClone.style.top = (rect.top + dy) + 'px';
   }
-  // Find element under finger
-  if(touchClone)touchClone.style.display='none';
-  const el=document.elementFromPoint(touch.clientX,touch.clientY);
-  if(touchClone)touchClone.style.display='';
-  if(el){
-    const li=el.closest('.sort-item');
-    if(li){
-      const targetIdx=+li.getAttribute('data-index');
-      if(targetIdx!==touchStartIndex){
-        const moved=currentOrder.splice(touchStartIndex,1)[0];
-        currentOrder.splice(targetIdx,0,moved);
-        touchStartIndex=targetIdx;
+  if (touchClone) touchClone.style.display = 'none';
+  const el = document.elementFromPoint(touch.clientX, touch.clientY);
+  if (touchClone) touchClone.style.display = '';
+  if (el) {
+    const li = el.closest('.sort-item');
+    if (li) {
+      const targetIdx = +li.getAttribute('data-index');
+      if (targetIdx !== touchStartIndex) {
+        const moved = currentOrder.splice(touchStartIndex, 1)[0];
+        currentOrder.splice(targetIdx, 0, moved);
+        touchStartIndex = targetIdx;
         renderSortList();
-        // Re-grab the new element
-        const items=document.querySelectorAll('.sort-item');
+        const items = document.querySelectorAll('.sort-item');
         items[targetIdx].classList.add('dragging');
-        touchItem=items[targetIdx];
-        touchStartY=touch.clientY;
+        touchItem = items[targetIdx];
+        touchStartY = touch.clientY;
       }
     }
   }
 }
-function onTouchEnd(){
-  if(touchClone){touchClone.remove();touchClone=null}
-  document.querySelectorAll('.sort-item').forEach(el=>el.classList.remove('dragging'));
-  touchItem=null;touchStartIndex=null;
+function onTouchEnd() {
+  if (touchClone) { touchClone.remove(); touchClone = null; }
+  document.querySelectorAll('.sort-item').forEach(el => el.classList.remove('dragging'));
+  touchItem = null; touchStartIndex = null;
 }
 
 // ============ TIMER ============
-function updateTimerDisplay(){
-  const m=Math.floor(timeLeft/60);const s=timeLeft%60;
-  const el=document.getElementById('timer');
-  el.textContent=`${m}:${s.toString().padStart(2,'0')}`;
-  el.className='timer';
-  if(timeLeft<=30)el.classList.add('critical');
-  else if(timeLeft<=60)el.classList.add('warning');
+function updateTimerDisplay() {
+  const m = Math.floor(timeLeft / 60);
+  const s = timeLeft % 60;
+  const el = document.getElementById('timer');
+  el.textContent = `${m}:${s.toString().padStart(2, '0')}`;
+  el.className = 'timer';
+  if (timeLeft <= 30) el.classList.add('critical');
+  else if (timeLeft <= 60) el.classList.add('warning');
 }
 
-// ============ SUBMIT ============
-function submitOrder(){
-  if(submitted)return;
-  submitted=true;
+// ============ AUTO SUBMIT (no button, timer expiry only) ============
+async function autoSubmit() {
+  if (submitted) return;
+  submitted = true;
   clearInterval(timerInterval);
-  document.getElementById('submit-btn').disabled=true;
-  document.getElementById('submit-btn').textContent='Submitted!';
 
-  const r=ROUNDS[currentRound];
-  const correct=[...r.items]; // already sorted by sort value (descending = first is "most")
+  const r = ROUNDS[currentRound];
+  const correct = [...r.items]; // already in correct order
 
   // Calculate adjacent-pairs score
-  let score=0;
-  const maxPairs=currentOrder.length-1;
-  for(let i=0;i<maxPairs;i++){
-    const a=currentOrder[i];
-    const b=currentOrder[i+1];
-    const aCorrectIdx=correct.indexOf(a);
-    const bCorrectIdx=correct.indexOf(b);
-    if(aCorrectIdx<bCorrectIdx)score++;
-  }
-  scores.push(score);
-
-  // Show results
-  showResults(score,maxPairs,correct);
-}
-
-function showResults(score,maxPairs,correct){
-  const r=ROUNDS[currentRound];
-  document.getElementById('results-title').textContent=`${r.title} Results`;
-  document.getElementById('results-score').textContent=`${score} / ${maxPairs}`;
-  document.getElementById('results-score-label').textContent=`adjacent pairs correct`;
-
-  // Show correct order
-  const ol=document.getElementById('correct-order-list');
-  ol.innerHTML='';
-  correct.forEach((item,i)=>{
-    const li=document.createElement('li');
-    li.innerHTML=`<span class="order-num">${i+1}</span><span class="order-label">${item.label}</span><span class="order-value">${item.value}</span>`;
-    li.style.opacity='0';li.style.transform='translateX(-20px)';
-    li.style.transition=`opacity 0.4s ${i*0.1}s, transform 0.4s ${i*0.1}s`;
-    ol.appendChild(li);
-    requestAnimationFrame(()=>{requestAnimationFrame(()=>{li.style.opacity='1';li.style.transform='translateX(0)'})});
-  });
-
-  // Discussion hooks
-  const dl=document.getElementById('discussion-list');
-  dl.innerHTML='';
-  r.discussion.forEach(d=>{
-    const li=document.createElement('li');
-    li.textContent=d;
-    dl.appendChild(li);
-  });
-
-  // Next button text
-  const btn=document.getElementById('next-round-btn');
-  if(currentRound>=ROUNDS.length-1){
-    btn.textContent='See Final Score';
-    btn.onclick=showFinal;
-  }else{
-    btn.textContent='Next Round';
-    btn.onclick=nextRound;
+  let score = 0;
+  const maxPairs = currentOrder.length - 1;
+  for (let i = 0; i < maxPairs; i++) {
+    const a = currentOrder[i];
+    const b = currentOrder[i + 1];
+    const aIdx = correct.indexOf(a);
+    const bIdx = correct.indexOf(b);
+    if (aIdx < bIdx) score++;
   }
 
-  showScreen('round-results');
+  teamScores.push({ round: currentRound, score: score, max: maxPairs });
+
+  // Submit to server
+  await api('submitScore', {
+    code: gameCode,
+    team: teamName,
+    round: currentRound,
+    score: score,
+    maxScore: maxPairs
+  });
+
+  // Show waiting screen
+  showScreen('waiting-screen');
+  document.getElementById('waiting-progress').textContent = 'Waiting for other teams...';
 }
 
-function nextRound(){
-  currentRound++;
-  if(currentRound>=ROUNDS.length){showFinal();return}
-  showRoundIntro();
+// ============ ROUND LEADERBOARD (team view) ============
+function showRoundLeaderboard(roundLB, round) {
+  const r = ROUNDS[round];
+  document.getElementById('round-lb-title').textContent = `Round ${round + 1}: ${r.title}`;
+  document.getElementById('round-lb-subtitle').textContent = r.direction;
+
+  const list = document.getElementById('round-lb-list');
+  list.innerHTML = '';
+  roundLB.forEach((entry, i) => {
+    const isMe = entry.name === teamName;
+    const div = document.createElement('div');
+    div.className = 'round-lb-item' + (isMe ? ' my-team' : '');
+    div.innerHTML = `
+      <span class="round-lb-rank">${i + 1}</span>
+      <span class="round-lb-name">${esc(entry.name)}${isMe ? ' (you)' : ''}</span>
+      <span class="round-lb-score">${entry.score}/${entry.maxScore}</span>
+    `;
+    list.appendChild(div);
+  });
+  showScreen('round-leaderboard');
 }
 
-function showFinal(){
-  const total=scores.reduce((a,b)=>a+b,0);
-  const maxTotal=ROUNDS.reduce((a,r)=>a+r.items.length-1,0);
-  document.getElementById('final-total').textContent=`${total} / ${maxTotal}`;
-  document.getElementById('final-label').textContent=`${teamName}'s total score across ${ROUNDS.length} rounds`;
-  showScreen('final-screen');
+// ============ TOURNAMENT COMPLETE (team view) ============
+function showTeamComplete(teams) {
+  const myTeam = teams.find(t => t.name === teamName);
+  if (myTeam) {
+    document.getElementById('team-final-score').textContent = `${myTeam.total} / ${myTeam.totalMax}`;
+    document.getElementById('team-final-label').textContent = `${teamName}'s final score`;
+  }
+  stopPolling();
+  showScreen('complete-screen');
 }
 
 // ============ HOST DASHBOARD ============
-function hostAddTeam(){
-  const input=document.getElementById('host-team-input');
-  const name=input.value.trim();
-  if(!name)return;
-  if(hostTeams.find(t=>t.name===name))return;
-  hostTeams.push({name,scores:new Array(ROUNDS.length).fill(null)});
-  input.value='';
-  renderLeaderboard();
+function renderHostDashboard(state, round, teams, roundLeaderboard) {
+  const codeEl = document.getElementById('host-game-code-display');
+  codeEl.innerHTML = `Game Code: <span>${gameCode}</span>`;
+
+  const statusEl = document.getElementById('host-status');
+  const controlsEl = document.getElementById('host-controls');
+
+  if (state === 'lobby') {
+    statusEl.textContent = `${teams.length} team${teams.length !== 1 ? 's' : ''} joined. Waiting to start.`;
+    controlsEl.innerHTML = teams.length > 0
+      ? `<button class="btn btn-primary" onclick="hostStartRound()">Start Round 1</button>`
+      : `<p style="color:var(--text-dim)">Share the game code with your teams.</p>`;
+  } else if (state === 'playing') {
+    const r = ROUNDS[round];
+    statusEl.textContent = `Round ${round + 1}/${TOTAL_ROUNDS}: ${r.title} (in progress)`;
+    // Count submitted from teams data
+    let submittedCount = 0;
+    teams.forEach(t => { if (t.rounds[round] !== undefined) submittedCount++; });
+    controlsEl.innerHTML = `<p style="color:var(--text-dim)">${submittedCount} of ${teams.length} teams submitted</p>`;
+  } else if (state === 'leaderboard') {
+    const r = ROUNDS[round];
+    statusEl.textContent = `Round ${round + 1}/${TOTAL_ROUNDS}: ${r.title} (results showing)`;
+    if (round < TOTAL_ROUNDS - 1) {
+      controlsEl.innerHTML = `<button class="btn btn-primary" onclick="hostStartRound()">Start Round ${round + 2}</button>`;
+    } else {
+      controlsEl.innerHTML = `<button class="btn btn-primary" onclick="hostFinishGame()">Show Final Results</button>`;
+    }
+  } else if (state === 'finished') {
+    statusEl.textContent = 'Tournament complete!';
+    controlsEl.innerHTML = `
+      <button class="btn btn-secondary btn-sm" onclick="hostShowResults()">Show Round-by-Round Results</button>
+      <button class="btn btn-secondary btn-sm" onclick="hostDownloadCSV()">Download CSV</button>
+      <button class="btn btn-secondary btn-sm" onclick="hostReset()">Reset Game</button>
+    `;
+  }
+
+  // Always render the leaderboard table
+  renderHostLeaderboard(teams, round);
 }
 
-function hostClearAll(){
-  if(confirm('Clear all teams and scores?')){hostTeams=[];renderLeaderboard()}
-}
-
-function hostRecalc(){
-  // Read values from inputs
-  document.querySelectorAll('.score-input').forEach(inp=>{
-    const ti=+inp.getAttribute('data-team');
-    const ri=+inp.getAttribute('data-round');
-    const val=inp.value.trim();
-    hostTeams[ti].scores[ri]=val===''?null:+val;
-  });
-  renderLeaderboard();
-}
-
-function renderLeaderboard(){
-  const c=document.getElementById('leaderboard-container');
-  if(hostTeams.length===0){
-    c.innerHTML='<p style="text-align:center;color:var(--text-dim);padding:32px">Add teams to get started.</p>';
+function renderHostLeaderboard(teams, currentRound) {
+  const c = document.getElementById('host-leaderboard-container');
+  if (!teams || teams.length === 0) {
+    c.innerHTML = '<p style="text-align:center;color:var(--text-dim);padding:32px">Teams will appear here as they join.</p>';
     return;
   }
 
-  // Calculate totals and sort
-  const teams=hostTeams.map((t,i)=>({
-    ...t,idx:i,
-    total:t.scores.reduce((a,s)=>a+(s||0),0)
-  }));
-  const sorted=[...teams].sort((a,b)=>b.total-a.total);
+  // Determine which round columns to show
+  const maxRoundWithScores = Math.max(...teams.flatMap(t => Object.keys(t.rounds).map(Number)), -1);
+  const showUpTo = Math.min(Math.max(maxRoundWithScores + 1, currentRound >= 0 ? currentRound : 0), TOTAL_ROUNDS - 1);
 
-  // Round headers: only show rounds that have at least one score entered
-  const activeRounds=[];
-  for(let ri=0;ri<ROUNDS.length;ri++){
-    if(hostTeams.some(t=>t.scores[ri]!==null))activeRounds.push(ri);
+  let html = '<table class="leaderboard"><thead><tr><th>#</th><th>Team</th>';
+  for (let ri = 0; ri <= showUpTo; ri++) {
+    html += `<th class="round-col" title="${ROUNDS[ri].title}">R${ri + 1}</th>`;
   }
-  // Always show at least the first round
-  if(activeRounds.length===0)activeRounds.push(0);
-  // And always show one more than the last scored round for entry
-  const lastActive=Math.max(...activeRounds);
-  if(lastActive<ROUNDS.length-1&&!activeRounds.includes(lastActive+1))activeRounds.push(lastActive+1);
+  html += '<th class="total-col">Total</th></tr></thead><tbody>';
 
-  let html='<table class="leaderboard"><thead><tr><th>#</th><th>Team</th>';
-  activeRounds.forEach(ri=>{
-    const r=ROUNDS[ri];
-    const short=r.title.length>6?r.title.substring(0,6)+'..':r.title;
-    html+=`<th class="round-col" title="${r.title}">R${ri+1}</th>`;
+  const sorted = [...teams].sort((a, b) => b.total - a.total);
+  sorted.forEach((t, rank) => {
+    const cls = rank < 3 ? ` class="rank-${rank + 1}"` : '';
+    html += `<tr${cls}><td>${rank + 1}</td><td class="team-name-cell">${esc(t.name)}</td>`;
+    for (let ri = 0; ri <= showUpTo; ri++) {
+      const roundData = t.rounds[ri];
+      const val = roundData ? `${roundData.score}/${roundData.maxScore}` : '-';
+      html += `<td class="round-cell">${val}</td>`;
+    }
+    html += `<td class="total-cell">${t.total}</td></tr>`;
   });
-  html+='<th class="total-col">Total</th></tr></thead><tbody>';
-
-  sorted.forEach((t,rank)=>{
-    const cls=rank<3?` class="rank-${rank+1}"`:'';
-    html+=`<tr${cls}><td>${rank+1}</td><td class="team-name-cell">${esc(t.name)}</td>`;
-    activeRounds.forEach(ri=>{
-      const val=t.scores[ri];
-      const max=ROUNDS[ri].items.length-1;
-      html+=`<td class="round-cell"><input type="number" class="score-input" data-team="${t.idx}" data-round="${ri}" min="0" max="${max}" value="${val!==null?val:''}" placeholder="-" onchange="hostRecalc()"></td>`;
-    });
-    html+=`<td class="total-cell">${t.total}</td></tr>`;
-  });
-  html+='</tbody></table>';
-  c.innerHTML=html;
+  html += '</tbody></table>';
+  c.innerHTML = html;
 }
 
-// ============ COPY SCORE ============
-function copyScore(){
-  const r=ROUNDS[currentRound];
-  const score=scores[scores.length-1];
-  const maxPairs=r.items.length-1;
-  const text=`${teamName}: ${r.title} = ${score}/${maxPairs}`;
-  navigator.clipboard.writeText(text).then(()=>{
-    const btn=document.getElementById('copy-score-btn');
-    btn.textContent='Copied!';
-    setTimeout(()=>btn.textContent='Copy score to clipboard',2000);
-  }).catch(()=>{
-    // Fallback: select text
-    prompt('Copy this to Zoom chat:',`${teamName}: ${r.title} = ${score}/${maxPairs}`);
+async function hostStartRound() {
+  const result = await api('startRound', { code: gameCode, pin: HOST_PIN });
+  if (result.error) { alert(result.error); return; }
+  // Polling will pick up the state change
+}
+
+async function hostFinishGame() {
+  const result = await api('finishGame', { code: gameCode, pin: HOST_PIN });
+  if (result.error) { alert(result.error); return; }
+}
+
+function hostShowResults() {
+  const panel = document.getElementById('host-results-panel');
+  panel.classList.remove('hidden');
+
+  let html = '<h3 style="text-align:center;margin-bottom:16px">Round-by-Round Results</h3>';
+
+  ROUNDS.forEach((r, ri) => {
+    html += `<div class="host-round-result">`;
+    html += `<h4>Round ${ri + 1}: ${r.title} (${r.direction})</h4>`;
+
+    // Correct order
+    html += '<ol class="correct-order" style="list-style:none;padding:0">';
+    r.items.forEach((item, idx) => {
+      html += `<li><span class="order-num">${idx + 1}</span><span class="order-label">${item.label}</span><span class="order-value">${item.value}</span></li>`;
+    });
+    html += '</ol>';
+
+    // Discussion hooks
+    html += '<ul class="discussion-hooks">';
+    r.discussion.forEach(d => {
+      html += `<li>${esc(d)}</li>`;
+    });
+    html += '</ul>';
+
+    html += '</div>';
   });
+
+  panel.innerHTML = html;
+  panel.scrollIntoView({ behavior: 'smooth' });
+}
+
+async function hostDownloadCSV() {
+  const result = await api('downloadCSV', { code: gameCode, pin: HOST_PIN });
+  if (result.error) { alert(result.error); return; }
+
+  const blob = new Blob([result.csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `scale-wars-${gameCode}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+async function hostReset() {
+  if (!confirm('Reset this game? All teams and scores will be cleared.')) return;
+  const result = await api('resetGame', { code: gameCode, pin: HOST_PIN });
+  if (result.error) { alert(result.error); return; }
+  // Polling will pick up the reset
 }
 
 // ============ UTILS ============
-function shuffleArray(arr){
-  for(let i=arr.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    [arr[i],arr[j]]=[arr[j],arr[i]];
-  }
+function esc(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
-function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 </script>
 </body>
 </html>
